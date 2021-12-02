@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Accueil Client</title>
+        <!-- Librairie Javascript: jQuery (v3.4.1) -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="accueilCss.css">
+    </head>
+    <body>
+        <div id="bandeau">
+            <h1>Accueil Predictif</h1>
+            <div class="sp-container">
+                <div class="sp-content">
+
+                    <h2 class="frame-1">Predictif</h2>
+                    <h2 class="frame-2">Pour nous, ton avenir n'a pas de mystère</h2>
+                    <h2 class="frame-3">Consulte sans tarder nos mediums !</h2>
+                    <h2 class="frame-4">Des réponses rapides et exactes !</h2>
+                    <h2 class="frame-5">
+                        <span>Amour,</span>
+                        <span>Santé,</span>
+                        <span>Bonheur.</span>
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <button id="mon_compte" onclick='window.location.href = "infosClient.html";'>Mon Compte</button>
+        <button id="bouton-deconnexion">Deconnexion</button>
+
+        <p id="top5">Affichage du top 5 des médiums</p><br>
+
+        <p id="listeSpirites">Affichage de la liste des spirites</p><br>
+        <p id="listeAstrologues">Affichage de la liste des astrologues</p><br>
+        <p id="listeCartomanciens">Affichage de la liste des Cartomanciens</p><br>
+
+        <div id="creerConsultSection">
+            <h3>Souhaitez vous connaitre votre futur ? Demandez une consultation avec un de nos médiums !</h3>
+
+            <label for="medium_choisi">Veuillez écrire le numéro du medium avec lequel vous souhaitez avoir une consultation</label>
+
+            <input type="text" id="medium_choisi" name="medium_choisi" required minlength="4" maxlength="8" size="10">
+            <button id="bouton-creerConsult">Creer une consultation</button>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+
+
+
+                // Appel AJAX
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'GET',
+                    data: {
+                        todo: 'listerSpirites'
+                    },
+                    dataType: 'json'
+                })
+                        .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                            console.log('Response', response); // LOG dans Console Javascript
+                            // Message pour le paragraphe de notification
+                            var spirites = response.spirites;
+                            $('#listeSpirites').html('<h2>Spirites : </h2><div>'); // Vider la liste HTML
+                            $.each(spirites, function (index, spirite) { // Boucle "foreach"
+                                $('#listeSpirites').append(// Ajouter du contenu dans l'élément, ici la liste HTML
+                                        '<li>' +
+                                        '<div class="div1" id=spirites><b>' + spirite.numero + ') Nom : ' + spirite.denomination + '</b> (' + spirite.genre + ') ' + spirite.presentation + '. Je travaille avec : ' + spirite.support + '</div>' +
+                                        '</li>'
+                                        );
+                            });
+                            $('#listeSpirites').append('</div>');
+
+
+                        })
+                        .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                            console.log('Error', error); // LOG dans Console Javascript
+                            alert("Erreur lors de l'appel AJAX");
+                        })
+                        .always(function () { // Fonction toujours appelée
+
+                        });
+
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'GET',
+                    data: {
+                        todo: 'listerAstrologues'
+                    },
+                    dataType: 'json'
+                })
+                        .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                            console.log('Response', response); // LOG dans Console Javascript
+                            // Message pour le paragraphe de notification
+                            var astrologues = response.astrologues;
+                            $('#listeAstrologues').html('<h2>Astrologues : </h2>'); // Ajouter 
+                            $.each(astrologues, function (index, astrologue) { // Boucle "foreach"
+                                $('#listeAstrologues').append(// Ajouter du contenu dans l'élément, ici la liste HTML
+                                        '<li>' +
+                                        '<div id=astrologues><b>' + astrologue.numero + ') Nom : ' + astrologue.denomination + '</b> (' + astrologue.genre + ') ' + astrologue.presentation + '. Ma formation : ' + astrologue.formation + ". Ma promotion: " + astrologue.promotion + '</div>' +
+                                        '</li>'
+                                        );
+                            });
+
+
+                        })
+                        .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                            console.log('Error', error); // LOG dans Console Javascript
+                            alert("Erreur lors de l'appel AJAX");
+                        })
+                        .always(function () { // Fonction toujours appelée
+
+                        });
+
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'GET',
+                    data: {
+                        todo: 'listerCartomanciens'
+                    },
+                    dataType: 'json'
+                })
+                        .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                            console.log('Response', response); // LOG dans Console Javascript
+                            // Message pour le paragraphe de notification
+                            var cartomanciens = response.cartomanciens;
+                            $('#listeCartomanciens').html('<h2>Cartomanciens : </h2>'); // Ajouter 
+                            $.each(cartomanciens, function (index, cartomancien) { // Boucle "foreach"
+                                $('#listeCartomanciens').append(// Ajouter du contenu dans l'élément, ici la liste HTML
+                                        '<li>' +
+                                        '<div id=cartomanciens><b>' + cartomancien.numero + ') Nom : ' + cartomancien.denomination + '</b> (' + cartomancien.genre + ') ' + cartomancien.presentation + '</div>' +
+                                        '</li>'
+                                        );
+                            });
+
+
+                        })
+                        .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                            console.log('Error', error); // LOG dans Console Javascript
+                            alert("Erreur lors de l'appel AJAX");
+                        })
+                        .always(function () { // Fonction toujours appelée
+
+                        });
+
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'GET',
+                    data: {
+                        todo: 'listertop5Mediums'
+                    },
+                    dataType: 'json'
+                })
+                        .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                            console.log('Response', response); // LOG dans Console Javascript
+                            // Message pour le paragraphe de notification
+                            var mediums = response.mediums;
+                            $('#top5').html('<h2>Top 5 de nos médium : </h2>'); // Ajouter 
+                            $.each(mediums, function (index, medium) { // Boucle "foreach"
+                                $('#top5').append(// Ajouter du contenu dans l'élément, ici la liste HTML
+                                        '<li>' +
+                                        '<div id="mediumsTop">' + medium.denomination + '</div>' +
+                                        '</li>'
+                                        );
+                            });
+
+
+                        })
+                        .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                            console.log('Error', error); // LOG dans Console Javascript
+                            alert("Erreur lors de l'appel AJAX");
+                        })
+                        .always(function () { // Fonction toujours appelée
+
+                        });
+                $('#bouton-creerConsult').on('click', function () {
+                    var champMedium = $('#medium_choisi').val();
+
+                    // Appel AJAX
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'GET',
+                        data: {
+                            todo: 'creerConsultation',
+                            medium: champMedium
+                        },
+                        dataType: 'json'
+                    })
+                            .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                                console.log('Response', response); // LOG dans Console Javascript
+                                if (response.succes) {
+                                    alert("Votre médium a été notifié. Il vous contactera bientot !")
+
+                                } else {
+                                    alert("Votre médium n'est pas disponible. Réessayer plus tard.")
+                                }
+                            })
+                            .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                                console.log('Error', error); // LOG dans Console Javascript
+                                alert("Erreur lors de l'appel AJAX");
+                            })
+                            .always(function () { // Fonction toujours appelée
+
+                            });
+                });
+
+                $('#bouton-deconnexion').on('click', function () { // Fonction appelée lors du clic sur le bouton
+
+                    console.log("clic sur le bouton de deconnexion"); // LOG dans Console Javascript
+
+                    // Appel AJAX
+
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'deconnecter',
+                        },
+                        dataType: 'json'
+                    })
+                            .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                                console.log('Response', response); // LOG dans Console Javascript
+                                if (response.succes) {
+                                    document.location.href = "index.html";
+
+                                }
+                            })
+
+                            .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                                console.log('Error', error); // LOG dans Console Javascript
+                                alert("Erreur lors de l'appel AJAX");
+                            })
+                            .always(function () { // Fonction toujours appelée
+
+                            });
+                });
+
+            });
+
+
+        </script>
+    </body>
+</html>

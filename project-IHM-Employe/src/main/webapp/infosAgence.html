@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Informations Agence </title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <LINK rel="stylesheet" type="text/css" href="OngletsStyleSheet.css">
+
+    </head>
+    <body>
+        <h1>Predictif</h1>
+        <button id="bouton-deconnexion">Deconnexion</button>
+        <div id="menu">
+            <ul id="onglets">
+                <li><a href="infosEmp.html"> Mes informations </a></li>
+                <li><a href="consultation.html"> Consultation </a></li>
+                <li class="active"><a href="infosAgence.html"> Informations agence </a></li>
+            </ul>
+        </div>
+
+        <br/>
+        <div class="tab">
+            <div id="graph-nbConsulMedium" class="highcharts-container"></div>
+            <br/>
+            <div id="graph-nbClientsEmploye" class="highcharts-container"></div>
+            <br/>
+
+            <div id="top5me">
+                <div style="color:#333333;font-size:20px;font-family: Arial, Helvetica, sans-serif"><b>Top 5 mediums :</b></div>
+                <ol style="list-style-type: decimal; list-style-position: outside;">
+                    <li id="top1"></li>
+                    <li id="top2"></li>
+                    <li id="top3"></li>
+                    <li id="top4"></li>
+                    <li id="top5"></li>
+                </ol>
+            </div>
+            <br/>
+        </div>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script>
+            $(document).ready(function () {
+
+                $('#bouton-deconnexion').on('click', function () { // Fonction appelée lors du clic sur le bouton
+
+                    console.log("clic sur le bouton de deconnexion"); // LOG dans Console Javascript
+
+                    // Appel AJAX
+
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'deconnecter',
+                        },
+                        dataType: 'json'
+                    })
+                            .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                                console.log('Response', response); // LOG dans Console Javascript
+                                if (response.succes) {
+                                    document.location.href = "index.html";
+                                }
+                            })
+
+                            .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                                console.log('Error', error); // LOG dans Console Javascript
+                                alert("Erreur lors de l'appel AJAX");
+                            })
+                            .always(function () { // Fonction toujours appelée
+
+                            });
+                });
+            });
+
+            function buildPieChart(container, graphData, titre) {
+
+                Highcharts.chart(container, {
+
+                    chart: {
+                        type: 'pie'
+                    },
+                    title: {
+                        text: titre
+                    },
+                    subtitle: {
+                        text: ''
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    series: [{name: graphData.label, data: graphData.data}]
+                });
+            }
+
+            var statNbConsulMedium = {
+                label: 'Nombre de consultations',
+                data: [
+                ]
+            };
+            $.ajax({
+                url: './ActionServlet',
+                method: 'POST',
+                data: {
+                    todo: 'infos-nbConsulMedium'
+                },
+                dataType: 'json'
+            })
+                    .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                        console.log('Response', response); // LOG dans Console Javascript
+                        if (response.succes) {
+                            var nbConsulMedium = response.liste;
+                            $.each(nbConsulMedium, function (index, ligne) { // Boucle "foreach"
+                                statNbConsulMedium.data.push({name: ligne.medium, y: ligne.nbConsul});
+                            });
+                            buildPieChart('graph-nbConsulMedium', statNbConsulMedium, 'Nombre de consultations par medium');
+                        }
+                    })
+                    .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                        console.log('Error', error); // LOG dans Console Javascript
+                        alert("Erreur lors de l'appel AJAX");
+                    })
+                    .always(function () { // Fonction toujours appelée
+
+                    });
+            var statNbClientsEmploye = {
+                label: 'Nombre de clients',
+                data: [
+                ]
+            };
+            $.ajax({
+                url: './ActionServlet',
+                method: 'POST',
+                data: {
+                    todo: 'infos-nbClientsEmploye'
+                },
+                dataType: 'json'
+            })
+                    .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                        console.log('Response', response); // LOG dans Console Javascript
+                        if (response.succes) {
+                            var nbClientsEmploye = response.liste;
+                            $.each(nbClientsEmploye, function (index, ligne) { // Boucle "foreach"
+                                statNbClientsEmploye.data.push({name: ligne.employe, y: ligne.nbClients});
+                            });
+                            buildPieChart('graph-nbClientsEmploye', statNbClientsEmploye, 'Nombre de clients par employe');
+                        }
+                    })
+                    .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                        console.log('Error', error); // LOG dans Console Javascript
+                        alert("Erreur lors de l'appel AJAX");
+                    })
+                    .always(function () { // Fonction toujours appelée
+
+                    });
+            $.ajax({
+                url: './ActionServlet',
+                method: 'POST',
+                data: {
+                    todo: 'infos-top5mediums'
+                },
+                dataType: 'json'
+            })
+                    .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                        console.log('Response', response); // LOG dans Console Javascript
+                        if (response.succes) {
+                            $('#top1').html(response.liste.top1);
+                            $('#top2').html(response.liste.top2);
+                            $('#top3').html(response.liste.top3);
+                            $('#top4').html(response.liste.top4);
+                            $('#top5').html(response.liste.top5);
+                        }
+                    })
+                    .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                        console.log('Error', error); // LOG dans Console Javascript
+                        alert("Erreur lors de l'appel AJAX");
+                    })
+                    .always(function () { // Fonction toujours appelée
+
+                    });
+        </script>
+
+    </body>
+</html>

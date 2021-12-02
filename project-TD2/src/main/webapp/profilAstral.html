@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Profil Astral </title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="OngletsStyleSheet.css">
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    </head>
+    <body>
+        
+        <div id="bandeau">
+            
+            <div class="sp-container">
+                <div class="sp-content">
+                    <h2 class="frame-1">Predictif</h2>
+                    <h2 class="frame-2">Pour nous, ton avenir n'a pas de mystère</h2>
+                    <h2 class="frame-3">Consulte sans tarder nos mediums !</h2>
+                    <h2 class="frame-4">Des réponses rapides et exactes !</h2>
+                    <h2 class="frame-5">
+                        <span>Amour,</span>
+                        <span>Santé,</span>
+                        <span>Bonheur.</span>
+                    </h2>
+                </div>
+            </div>
+        </div>
+        
+        <h1><a id="titre-lienAccueil" href="accueilClient.html">Predictif</a></h1>
+        <button id="bouton-deconnexion">Deconnexion</button>
+
+
+        <div id="menu">
+            <ul id="onglets">
+                <li><a href="infosClient.html"> Mes informations </a></li>
+                <li class="active"><a href="profilAstral.html"> Profil Astral </a></li>
+                <li><a href="historiqueConsultations.html"> Historique </a></li>
+            </ul>
+        </div>
+
+        <div class="tab">
+            <div id="profilAstralSection">
+                <span>Signe du zodiac :</span>
+                <span id="signeZodiac"></span></br>
+
+                <span>Couleur porte-bonheur :</span>
+                <span id="couleur"></span></br>
+
+                <span>Signe astrologique :</span>
+                <span id="signeAstrologique"></span></br>
+
+                <span>Animal totem :</span>
+                <span id="animal"></span></br>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                // Appel AJAX
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        todo: 'profilAstral'
+                    },
+                    dataType: 'json'
+                })
+                        .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                            console.log('Response', response); // LOG dans Console Javascript
+                            // Message pour le paragraphe de notification
+                            var client = response.client;
+                            $('#signeZodiac').append(client.profilAstral.signeZodiaque);
+                            $('#couleur').append(client.profilAstral.couleurBonheur);
+                            $('#signeAstrologique').append(client.profilAstral.signeChinois);
+                            $('#animal').append(client.profilAstral.animalTotem);
+                        })
+                        .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                            console.log('Error', error); // LOG dans Console Javascript
+                            alert("Erreur lors de l'appel AJAX");
+                        })
+                        .always(function () { // Fonction toujours appelée
+
+                        });
+
+                $('#bouton-deconnexion').on('click', function () { // Fonction appelée lors du clic sur le bouton
+
+                    console.log("clic sur le bouton de deconnexion"); // LOG dans Console Javascript
+
+                    // Appel AJAX
+
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'deconnecter',
+                        },
+                        dataType: 'json'
+                    })
+                            .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                                console.log('Response', response); // LOG dans Console Javascript
+                                if (response.succes) {
+                                    document.location.href = "index.html";
+
+                                }
+                            })
+
+                            .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                                console.log('Error', error); // LOG dans Console Javascript
+                                alert("Erreur lors de l'appel AJAX");
+                            })
+                            .always(function () { // Fonction toujours appelée
+
+                            });
+                });
+            });
+        </script>
+
+    </body>
+</html>

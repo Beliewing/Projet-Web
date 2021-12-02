@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Mon Compte</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="OngletsStyleSheet.css">
+    </head>
+    <body>
+        <h1>Predictif</h1>
+        <button id="bouton-deconnexion">Deconnexion</button>
+        <br/>
+        <div id="menu">
+            <ul id="onglets">
+                <li class="active"><a href="infosEmp.html"> Mes informations </a></li>
+                <li><a href="consultation.html"> Consultation </a></li>
+                <li><a href="infosAgence.html"> Informations agence </a></li>
+            </ul>
+        </div>
+        <br/>
+
+
+        <div class="tab">
+            <button id="modifier_infos">Modifier</button>
+            <button id="sauvegarder" disabled>Sauvegarder</button>
+
+            <div id="infos-emp">
+                <span>Nom :</span>
+                <span id="nom"></span><br/>
+
+                <span>Prénom :</span>
+                <span id="prenom"></span><br/>
+
+                <span>Genre :</span>
+                <span id="genre"></span><br/>
+
+                <span>Mail :</span>
+                <span id="mail"></span><br/>
+
+                <span>Téléphone :</span>
+                <span id="tel"></span><br/>
+
+                <span>Nombre de consultations :</span>
+                <span id="nbConsultations"></span><br/>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+
+                $('#bouton-deconnexion').on('click', function () { // Fonction appelée lors du clic sur le bouton
+
+                    console.log("clic sur le bouton de deconnexion"); // LOG dans Console Javascript
+
+                    // Appel AJAX
+
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'deconnecter',
+                        },
+                        dataType: 'json'
+                    })
+                            .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                                console.log('Response', response); // LOG dans Console Javascript
+                                if (response.succes) {
+                                    document.location.href = "index.html";
+
+                                }
+                            })
+
+                            .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                                console.log('Error', error); // LOG dans Console Javascript
+                                alert("Erreur lors de l'appel AJAX");
+                            })
+                            .always(function () { // Fonction toujours appelée
+
+                            });
+                });
+
+                // Appel AJAX
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        todo: 'infos-employe'
+                    },
+                    dataType: 'json'
+                })
+                        .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                            console.log('Response', response); // LOG dans Console Javascript
+                            if (response.connexion) {
+                                $('#nom').html(response.employe.nom);
+                                $('#prenom').html(response.employe.prenom);
+                                $('#genre').html(response.employe.genre);
+                                $('#mail').html(response.employe.mail);
+                                $('#tel').html(response.employe.tel);
+                                $('#nbConsultations').html(response.employe.nbConsultations);
+                            }
+                        })
+                        .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                            console.log('Error', error); // LOG dans Console Javascript
+                            alert("Erreur lors de l'appel AJAX");
+                        })
+                        .always(function () { // Fonction toujours appelée
+
+                        });
+
+                $('#modifier_infos').on('click', function () { // Fonction appelée lors du clic sur le bouton
+
+                    console.log("clic sur le bouton de modification du profil"); // LOG dans Console Javascript
+                    //$('#nom').innerHTML='<input type="text" id="nom"/>'; // Message pour le paragraphe de notification
+                    var nomAncien = $('#nom').text();
+                    var prenomAncien = $('#prenom').text();
+                    var genreAncien = $('#genre').text();
+                    var telAncien = $('#tel').text();
+                    var mailAncien = $('#mail').text();
+                    $("#nom").replaceWith('<input type="text" id="nom" value="' + nomAncien + '" />');
+                    $("#prenom").replaceWith('<input type="text" id="prenom" value="' + prenomAncien + '" />');
+                    $("#genre").replaceWith('<input type="text" id="genre" value="' + genreAncien + '" />');
+                    $("#tel").replaceWith('<input type="text" id="tel" value="' + telAncien + '" />');
+                    $("#mail").replaceWith('<input type="text" id="mail" value="' + mailAncien + '" />');
+                    $("#modifier_infos").prop("disabled", true);
+                    $("#sauvegarder").prop("disabled", false);
+
+                    $('#sauvegarder').on('click', function () { // Fonction appelée lors du clic sur le bouton
+                        console.log("clic sur le bouton de sauvegarde du profil");
+                        // Récupération de la valeur des champs du formulaire
+                        var nvNom = $('#nom').val();
+                        var nvPrenom = $('#prenom').val();
+                        var nvGenre = $('#genre').val();
+                        var nvtel = $('#tel').val();
+                        var nvMail = $('#mail').val();
+                        console.log(nvNom + nvPrenom + nvGenre + nvtel + nvMail);
+                        // Appel AJAX
+                        $.ajax({
+                            url: './ActionServlet',
+                            method: 'POST',
+                            data: {
+                                todo: 'modifier-infos',
+                                nom: nvNom,
+                                prenom: nvPrenom,
+                                genre: nvGenre,
+                                mail: nvMail,
+                                tel: nvtel
+                            },
+                            dataType: 'json'
+                        })
+                                .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                                    console.log('Response', response); // LOG dans Console Javascript
+                                    $("#nom").replaceWith('<span id="nom">' + nvNom + '</span>');
+                                    $("#prenom").replaceWith('<span id="prenom">' + nvPrenom + '</span>');
+                                    $("#genre").replaceWith('<span id="genre">' + nvGenre + '</span>');
+                                    $("#tel").replaceWith('<span id="tel">' + nvtel + '</span>');
+                                    $("#mail").replaceWith('<span id="mail">' + nvMail + '</span>');
+                                })
+                                .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                                    console.log('Error', error); // LOG dans Console Javascript
+                                    alert("Erreur lors de l'appel AJAX");
+                                })
+                                .always(function () { // Fonction toujours appelée
+                                    $("#sauvegarder").prop("disabled", true);
+                                    $("#modifier_infos").prop("disabled", false);
+
+                                });
+                    });
+
+                });
+                console.log("je ss sorti du bouton");
+
+            });
+        </script>
+
+    </body>
+</html>

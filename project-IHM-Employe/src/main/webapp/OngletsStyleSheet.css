@@ -1,0 +1,152 @@
+
+#onglets li
+{
+    float : left;
+    height : 21px; /* à modifier suivant la taille de la police pour centrer le texte dans l'onglet */
+    background-color: #F4F9FD;
+    margin : 2px 2px 0 2px !important;  /* Pour les navigateurs autre que IE */
+    margin : 1px 2px 0 2px;  /* Pour IE  */
+    border : 1px solid #9EA0A1;
+    list-style-type: none;
+}
+
+#onglets li.active
+{
+    border-bottom: 1px solid #fff;
+    background-color: #fff;
+}
+
+#onglets a
+{
+    display : block;
+    color : #666;
+    text-decoration : none;
+    padding : 4px;
+}
+
+#onglets a:hover
+{
+    background : #fff;
+}
+
+#historique
+{
+    border-collapse: collapse; /* Les bordures du tableau seront collées (plus joli) */
+}
+
+td,th
+{
+    border: 1px solid black;
+}
+
+h1 { text-align: center; }
+
+.highcharts-container {
+    left:10%;
+    max-width: 800px;
+    height: 350px;
+    margin: auto;
+    position: inherit;
+}
+
+#graph-nbConsulMedium{
+    position: inherit;
+    top : 2%;
+    margin: auto;
+}
+
+#graph-nbClientsEmploye{
+    position: inherit;
+    top : 40%;
+    margin: auto;
+}
+
+.tab{
+    top:250px;
+    left:18%;
+    position: absolute;
+    background-color:#cda3d6;
+    height: 1100px;
+    width: 800px;
+}
+
+
+#onglets li
+{
+    position: relative;
+    top:100px;
+    left:32.5%;
+
+    float : left;
+    height : 21px; /* à modifier suivant la taille de la police pour centrer le texte dans l'onglet */
+    border : none;
+    margin : 2px 2px 0 2px !important;  /* Pour les navigateurs autre que IE */
+    margin : 1px 2px 0 2px;  /* Pour IE  */
+    border : 1px solid #9EA0A1;
+    border-radius:10px 10px 0 0;
+    background:linear-gradient(to bottom, #cda3d6 5%, #774b80 100%);
+    background-color:#cda3d6;
+    border-bottom: 12px solid #774b80;
+    color : #fff;
+    list-style-type: none;
+    font-size: 20px;
+}
+
+#onglets li.active
+{
+    display : block;
+    background:#fff;
+    border-bottom: 12px solid #fff;
+    color: #333;
+    list-style-type: none;
+    font-size: 20px;
+}
+
+#onglets a
+{
+    display : block;
+    text-decoration : none;
+    padding : 4px;
+    border : none;
+    border-radius:10px 10px 0 0;
+    list-style-type: none;
+    font-size: 20px;
+    color: black;
+}
+
+#onglets a:hover
+{
+    background : #fff;
+    color : #cda3d6;
+}
+
+#modifier_infos{
+    top: 2%;
+    right: 10%;
+    position: absolute;	
+
+}
+
+#sauvegarder {
+    top: 7%;
+    right: 10%;
+    position: absolute;	
+}
+
+#bloc-infosClient{
+    top: 5%;
+    left: 5%;
+    position: inherit;	
+}
+
+#top5me{
+    top: 75%;
+    right: 70%;
+    position: inherit;	
+}
+
+#infos-emp{
+    top: 2%;
+    left: 2%;
+    position: inherit;	
+}

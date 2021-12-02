@@ -1,0 +1,76 @@
+
+body {
+    font-family: Arial, sans-serif;
+    background: #ddd;
+}
+
+h1 {
+    text-align: center;
+    font-family: "Trebuchet MS", Tahoma, Arial, sans-serif;
+    color: black;
+    text-shadow: 0 1px 0 #fff;
+    margin: 50px 0;
+}
+
+#formulaireConnection{
+    font-family: "Trebuchet MS", Tahoma, Arial, sans-serif;
+    text-align: center;
+    border-radius: 25px;
+    width: 400px;
+    border: 2px solid #774b80;
+    padding: 50px;
+    margin: auto;
+}
+
+h2{
+    top:320px;
+    left:0%;
+    position: relative;
+}
+
+#bouton-deconnexion {
+    bottom: 91%;
+    right: 2%;
+    position: absolute;	
+
+    box-shadow: 3px 4px 0px 0px #b79bbd;
+    background:linear-gradient(to bottom, #cda3d6 5%, #774b80 100%);
+    background-color:#cda3d6;
+    border-radius:15px;
+    border:1px solid #b68abf;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-family:Arial;
+    font-size:17px;
+    padding:7px 25px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #aa8fb0;
+}
+#bouton-deconnexion:hover {
+    background:linear-gradient(to bottom, #774b80 5%, #cda3d6 100%);
+    background-color:#774b80;
+}
+
+#bouton-connexion{
+    top:9px;
+    position: relative;	
+
+    box-shadow: 3px 4px 0px 0px #b79bbd;
+    background:linear-gradient(to bottom, #cda3d6 5%, #774b80 100%);
+    background-color:#cda3d6;
+    border-radius:15px;
+    border:1px solid #b68abf;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-family:Arial;
+    font-size:17px;
+    padding:7px 25px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #aa8fb0;
+}
+#bouton-connexion:hover {
+    background:linear-gradient(to bottom, #774b80 5%, #cda3d6 100%);
+    background-color:#774b80;
+}

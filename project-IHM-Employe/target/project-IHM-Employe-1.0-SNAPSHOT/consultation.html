@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title> Consultation </title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <LINK rel="stylesheet" type="text/css" href="OngletsStyleSheet.css">
+    </head>
+    <body>
+        <h1>Predictif</h1>
+        <button id="bouton-deconnexion">Deconnexion</button>
+        <div id="menu">
+            <ul id="onglets">
+                <li><a href="infosEmp.html"> Mes informations </a></li>
+                <li class="active"><a href="consultation.html"> Consultation </a></li>
+                <li><a href="infosAgence.html"> Informations agence </a></li>
+            </ul>
+        </div>
+        
+        <div class="tab">
+            
+            <div id="bloc-infosClient">
+                <div id="notification"></div>
+                <button id="bouton-confirmation" disabled>Envoyer la confirmation</button>
+                <br/>
+                <span style="font-size: 20px"><b>Medium à incarner :</b></span>
+                <table id="medium">
+                    <tr>
+                        <th>Denomination</th>
+                        <th>Genre</th>
+                        <th>Presentation</th>
+                    </tr>
+                </table>
+                <br/>
+
+                <span style="font-size: 20px"><b>Mon client :</b></span>
+                <div>
+                    <span>Nom :</span>
+                    <span id="nom"></span><br/>
+
+                    <span>Prénom :</span>
+                    <span id="prenom"></span><br/>
+
+                    <span>Civilite :</span>
+                    <span id="civilite"></span><br/>
+
+                    <span>Date de naissance :</span>
+                    <span id="dateNaissance"></span><br/>
+
+                    <span>Mail :</span>
+                    <span id="mail"></span><br/>
+
+                    <span>Téléphone :</span>
+                    <span id="tel"></span><br/>
+
+                    <span>Profil Astral :</span>
+                    <span id="profilAstral">
+                        <br/>
+
+                        <span>Signe du zodiaque :</span>
+                        <span id="signeZodiac"></span><br/>
+
+                        <span>Signe astrologique chinois :</span>
+                        <span id="signeChinois"></span><br/>
+
+                        <span>Couleur porte bonheur :</span>
+                        <span id="couleurBonheur"></span><br/>
+
+                        <span>Animal totem :</span>
+                        <span id="animalTotem"></span><br/>
+
+                    </span><br/>
+                </div>
+
+                <span>Historique :</span>
+                <div>
+                    <table id="historique">
+                        <tr>
+                            <th>Date</th>
+                            <th>Heure de début</th>
+                            <th>Heure de fin</th>
+                            <th>Médium consulté</th>
+                            <th>Commentaire</th>
+                        </tr>
+                    </table>
+                </div>
+                <br/>
+
+                <span style="font-size: 20px"><b>Ma consultation :</b></span>
+                <br/>
+                <button id="bouton-debut" disabled>Debuter l'appel</button>
+                <span>Heure de début :</span>
+                <span id="heure-debut"></span><br/>
+                <button id="bouton-fin" disabled>Terminer l'appel</button>
+                <span>Heure de fin :</span>
+                <span id="heure-fin"></span><br/>
+
+                <br/>
+                <span>Commentaire :</span>
+                <input type="text" id="champ-commentaire" size="100" />
+                <button id="bouton-commentaire" disabled>Valider le commentaire</button>
+                <br/>
+
+                <br/>
+                <span>Prédictions aléatoires :</span>
+                <span>Note amour :</span>
+                <input type="text" id="champ-amour" size="10" />
+                <span>Note santé :</span>
+                <input type="text" id="champ-sante" size="10" />
+                <span>Note travail :</span>
+                <input type="text" id="champ-travail" size="10" />
+                <button id="bouton-prediction" disabled>Demander une prédiction</button>
+                <div id="prediction-amour"></div>
+                <div id="prediction-sante"></div>
+                <div id="prediction-travail"></div>
+                <br/>
+
+                <button id="bouton-valider" disabled>Valider la consultation</button>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        todo: 'obtenir-etat'
+                    },
+                    dataType: 'json'
+                })
+                        .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                            console.log('Response', response); // LOG dans Console Javascript
+                            if (response.succes) {
+                                if (response.etat === "en attente") {
+                                    $("#bouton-confirmation").prop("disabled", false);
+                                }
+                                if (response.etat === "confirmee") {
+                                    $("#bouton-debut").prop("disabled", false);
+                                }
+                                if (response.etat === "en cours") {
+                                    $("#bouton-fin").prop("disabled", false);
+                                }
+                                if (response.etat === "terminee") {
+                                    $("#bouton-commentaire").prop("disabled", false);
+                                }
+                                if (response.etat === "validee") {
+                                    $("#bouton-valider").prop("disabled", false);
+                                }
+                            }
+                        })
+
+                        .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                            console.log('Error', error); // LOG dans Console Javascript
+                            alert("Erreur lors de l'appel AJAX");
+                        })
+                        .always(function () { // Fonction toujours appelée
+
+                        });
+
+
+                $('#bouton-deconnexion').on('click', function () { // Fonction appelée lors du clic sur le bouton
+
+                    console.log("clic sur le bouton de deconnexion"); // LOG dans Console Javascript
+
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'deconnecter'
+                        },
+                        dataType: 'json'
+                    })
+                            .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                                console.log('Response', response); // LOG dans Console Javascript
+                                if (response.succes) {
+                                    document.location.href = "index.html";
+                                }
+                            })
+
+                            .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                                console.log('Error', error); // LOG dans Console Javascript
+                                alert("Erreur lors de l'appel AJAX");
+                            })
+                            .always(function () { // Fonction toujours appelée
+
+                            });
+                });
+
+
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        todo: 'consultation-medium'
+                    },
+                    dataType: 'json'
+                })
+                        .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                            console.log('Response', response); // LOG dans Console Javascript
+                            if (response.succes) {
+                                $('#medium').append(// Ajouter du contenu dans l'élément, ici la liste HTML
+                                        '<tr>' +
+                                        '<td>' + response.medium.denomination + '</td>' +
+                                        '<td>' + response.medium.genre + '</td><td>' + response.medium.presentation +
+                                        '</td>' +
+                                        '</tr>'
+                                        );
+                            }
+                        })
+                        .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                            console.log('Error', error); // LOG dans Console Javascript
+                            alert("Erreur lors de l'appel AJAX");
+                        })
+                        .always(function () { // Fonction toujours appelée
+
+                        });
+
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        todo: 'consultation-infos-client'
+                    },
+                    dataType: 'json'
+                })
+                        .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                            console.log('Response', response); // LOG dans Console Javascript
+                            if (response.consultEnCours) {
+                                $('#nom').html(response.client.nom);
+                                $('#prenom').html(response.client.prenom);
+                                $('#civilite').html(response.client.civilite);
+                                $('#dateNaissance').html(response.client.dateNaissance);
+                                $('#mail').html(response.client.mail);
+                                $('#tel').html(response.client.tel);
+                                $('#signeZodiac').html(response.profilAstral.signeZodiac);
+                                $('#signeChinois').html(response.profilAstral.signeChinois);
+                                $('#couleurBonheur').html(response.profilAstral.couleurBonheur);
+                                $('#animalTotem').html(response.profilAstral.animalTotem);
+                                $("#bouton-prediction").prop("disabled", false)
+                                $('#bouton-prediction').on('click', function () { // Fonction appelée lors du clic sur le bouton
+
+                                    console.log("clic sur le bouton prediction"); // LOG dans Console Javascript
+                                    var champAmour = $('#champ-amour').val();
+                                    var champSante = $('#champ-sante').val();
+                                    var champTravail = $('#champ-travail').val();
+
+                                    // Appel AJAX
+
+                                    $.ajax({
+                                        url: './ActionServlet',
+                                        method: 'POST',
+                                        data: {
+                                            todo: 'prediction-aleatoire',
+                                            amour: champAmour,
+                                            sante: champSante,
+                                            travail: champTravail
+                                        },
+                                        dataType: 'json'
+                                    })
+                                            .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                                                console.log('Response', response); // LOG dans Console Javascript
+                                                if (response.succes) {
+                                                    $('#prediction-amour').html(response.predictions.amour);
+                                                    $('#prediction-sante').html(response.predictions.sante);
+                                                    $('#prediction-travail').html(response.predictions.travail);
+                                                } else {
+                                                    alert("Erreur de prédictions");
+                                                }
+                                            })
+
+                                            .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                                                console.log('Error', error); // LOG dans Console Javascript
+                                                alert("Erreur lors de l'appel AJAX");
+                                            })
+                                            .always(function () { // Fonction toujours appelée
+
+                                            });
+                                });
+
+
+                            } else {
+                                $('#notification').html("Pas de consultation en cours");
+                            }
+                        })
+                        .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                            console.log('Error', error); // LOG dans Console Javascript
+                            alert("Erreur lors de l'appel AJAX");
+                        })
+                        .always(function () { // Fonction toujours appelée
+
+                        });
+
+                $('#bouton-confirmation').on('click', function () { // Fonction appelée lors du clic sur le bouton
+
+                    console.log("clic sur le bouton de confirmation"); // LOG dans Console Javascript
+
+                    // Appel AJAX
+
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'envoyer-confirmation'
+                        },
+                        dataType: 'json'
+                    })
+                            .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                                console.log('Response', response); // LOG dans Console Javascript
+                                if (response.succes) {
+                                    $("#bouton-confirmation").prop("disabled", true);
+                                    $("#bouton-debut").prop("disabled", false);
+                                    alert("Confirmation envoyée au client, tenez-vous prêt !");
+                                } else {
+                                    alert("Impossible d'envoyer la confirmation");
+                                }
+                            })
+
+                            .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                                console.log('Error', error); // LOG dans Console Javascript
+                                alert("Erreur lors de l'appel AJAX");
+                            })
+                            .always(function () { // Fonction toujours appelée
+
+                            });
+                });
+                $('#bouton-debut').on('click', function () { // Fonction appelée lors du clic sur le bouton
+
+                    console.log("clic sur le bouton de debut"); // LOG dans Console Javascript
+
+                    // Appel AJAX
+
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'debuter-appel'
+                        },
+                        dataType: 'json'
+                    })
+                            .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                                console.log('Response', response); // LOG dans Console Javascript
+                                if (response.succes) {
+                                    $('#heure-debut').html(response.heure);
+                                    $("#bouton-debut").prop("disabled", true);
+                                    $("#bouton-fin").prop("disabled", false);
+
+                                } else {
+                                    alert("Impossible de debuter");
+                                }
+                            })
+
+                            .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                                console.log('Error', error); // LOG dans Console Javascript
+                                alert("Erreur lors de l'appel AJAX");
+                            })
+                            .always(function () { // Fonction toujours appelée
+
+                            });
+                });
+
+                $('#bouton-fin').on('click', function () { // Fonction appelée lors du clic sur le bouton
+
+                    console.log("clic sur le bouton de fin"); // LOG dans Console Javascript
+
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'terminer-appel'
+                        },
+                        dataType: 'json'
+                    })
+                            .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                                console.log('Response', response); // LOG dans Console Javascript
+                                if (response.succes) {
+                                    $('#heure-fin').html(response.heure);
+                                    $("#bouton-fin").prop("disabled", true);
+                                    $("#bouton-commentaire").prop("disabled", false);
+
+                                } else {
+                                    alert("Impossible de terminer");
+                                }
+                            })
+
+                            .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                                console.log('Error', error); // LOG dans Console Javascript
+                                alert("Erreur lors de l'appel AJAX");
+                            })
+                            .always(function () { // Fonction toujours appelée
+
+                            });
+                });
+
+                $('#bouton-commentaire').on('click', function () { // Fonction appelée lors du clic sur le bouton
+                    console.log("clic sur le bouton commentaire"); // LOG dans Console Javascript
+                    var champCommentaire = $('#champ-commentaire').val();
+
+                    // Appel AJAX
+
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'valider-commentaire',
+                            commentaire: champCommentaire
+                        },
+                        dataType: 'json'
+                    })
+                            .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                                console.log('Response', response); // LOG dans Console Javascript
+                                if (response.succes) {
+                                    $("#bouton-commentaire").prop("disabled", true);
+                                    $("#bouton-valider").prop("disabled", false);
+
+                                }
+                            })
+
+                            .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                                console.log('Error', error); // LOG dans Console Javascript
+                                alert("Erreur lors de l'appel AJAX");
+                            })
+                            .always(function () { // Fonction toujours appelée
+
+                            });
+                });
+
+                $('#bouton-valider').on('click', function () { // Fonction appelée lors du clic sur le bouton
+
+                    console.log("clic sur le bouton valider"); // LOG dans Console Javascript
+
+                    // Appel AJAX
+
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'valider-consultation'
+                        },
+                        dataType: 'json'
+                    })
+                            .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                                console.log('Response', response); // LOG dans Console Javascript
+                                if (response.succes) {
+                                    $("#bouton-valider").prop("disabled", true);
+                                    $("#bouton-prediction").prop("disabled", true);
+                                    window.location.reload();
+                                } else {
+                                    alert("Impossible de valider");
+                                }
+                            })
+
+                            .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                                console.log('Error', error); // LOG dans Console Javascript
+                                alert("Erreur lors de l'appel AJAX");
+                            })
+                            .always(function () { // Fonction toujours appelée
+
+                            });
+                });
+
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        todo: 'consultation-historique'
+                    },
+                    dataType: 'json'
+                })
+                        .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                            console.log('Response', response); // LOG dans Console Javascript
+                            // Message pour le paragraphe de notification
+                            if (response.succes) {
+                                var consultations = response.historique;
+                                $.each(consultations, function (index, consultation) { // Boucle "foreach"
+                                    $('#historique').append(// Ajouter du contenu dans l'élément, ici la liste HTML
+                                            '<tr>' +
+                                            '<td>' + consultation.dateDeb + '</td>' +
+                                            '<td>' + consultation.heureDeb + '</td><td>' + consultation.heureFin +
+                                            '</td><td>' + consultation.medium.denomination + '</td><td>'
+                                            + consultation.commentaire + '</td>' +
+                                            '</tr>'
+                                            );
+                                });
+                            }
+                        })
+                        .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                            console.log('Error', error); // LOG dans Console Javascript
+                            alert("Erreur lors de l'appel AJAX");
+                        })
+                        .always(function () { // Fonction toujours appelée
+
+                        });
+
+            });
+        </script>
+
+    </body>
+</html>

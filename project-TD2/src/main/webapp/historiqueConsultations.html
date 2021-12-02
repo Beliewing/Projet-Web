@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Historique</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="OngletsStyleSheet.css">
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    </head>
+    <body>
+        <div id="bandeau">
+            
+            <div class="sp-container">
+                <div class="sp-content">
+
+                    <h2 class="frame-1">Predictif</h2>
+                    <h2 class="frame-2">Pour nous, ton avenir n'a pas de mystère</h2>
+                    <h2 class="frame-3">Consulte sans tarder nos mediums !</h2>
+                    <h2 class="frame-4">Des réponses rapides et exactes !</h2>
+                    <h2 class="frame-5">
+                        <span>Amour,</span>
+                        <span>Santé,</span>
+                        <span>Bonheur.</span>
+                    </h2>
+                </div>
+            </div>
+            
+        </div>
+        
+        
+        <h1><a id="titre-lienAccueil" href="accueilClient.html">Predictif</a></h1>
+        <button id="bouton-deconnexion">Deconnexion</button>
+
+
+        <div id="menu">
+            <ul id="onglets">
+                <li><a href="infosClient.html"> Mes informations </a></li>
+                <li><a href="profilAstral.html"> Profil Astral </a></li>
+                <li class="active"><a href="historiqueConsultations.html"> Historique </a></li>
+            </ul>
+        </div>
+
+        <div id="divHistorique" class="tab">
+            <table id="historique">
+                <tr>
+                    <th>Date</th>
+                    <th>Heure de début</th>
+                    <th>Heure de fin</th>
+                    <th>Médium consulté</th>
+                </tr>
+            </table>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+
+                // Appel AJAX
+                $.ajax({
+                    url: './ActionServlet',
+                    method: 'POST',
+                    data: {
+                        todo: 'historiqueConsultations'
+                    },
+                    dataType: 'json'
+                })
+                        .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                            console.log('Response', response); // LOG dans Console Javascript
+                            // Message pour le paragraphe de notification
+                            if (response.historique != false) {
+                                var consultations = response.historique;
+                                $.each(consultations, function (index, consultation) { // Boucle "foreach"
+                                    $('#historique').append(// Ajouter du contenu dans l'élément, ici la liste HTML
+                                            '<tr>' +
+                                            '<td>' + consultation.dateDeb + '</td>' +
+                                            '<td>' + consultation.heureDeb + '</td><td>' + consultation.heureFin + '</td><td>' + consultation.medium.denomination + '</td>' +
+                                            '</tr>'
+                                            );
+                                });
+                            } else {
+                                $("#divHistorique").append("<div id='message'> Vous n'avez pas encore de consultations.</div>");
+                            }
+                        })
+                        .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                            console.log('Error', error); // LOG dans Console Javascript
+                            alert("Erreur lors de l'appel AJAX");
+                        })
+                        .always(function () { // Fonction toujours appelée
+
+                        });
+
+                $('#bouton-deconnexion').on('click', function () { // Fonction appelée lors du clic sur le bouton
+
+                    console.log("clic sur le bouton de deconnexion"); // LOG dans Console Javascript
+
+                    // Appel AJAX
+
+                    $.ajax({
+                        url: './ActionServlet',
+                        method: 'POST',
+                        data: {
+                            todo: 'deconnecter',
+                        },
+                        dataType: 'json'
+                    })
+                            .done(function (response) { // Fonction appelée en cas d'appel AJAX réussi
+                                console.log('Response', response); // LOG dans Console Javascript
+                                if (response.succes) {
+                                    document.location.href = "index.html";
+
+                                }
+                            })
+
+                            .fail(function (error) { // Fonction appelée en cas d'erreur lors de l'appel AJAX
+                                console.log('Error', error); // LOG dans Console Javascript
+                                alert("Erreur lors de l'appel AJAX");
+                            })
+                            .always(function () { // Fonction toujours appelée
+
+                            });
+                });
+            });
+        </script>
+    </body>
+</html>
